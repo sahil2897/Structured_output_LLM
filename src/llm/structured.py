@@ -2,8 +2,6 @@ from pydantic import BaseModel
 
 from src.llm.parser import StructuredOutputParser
 
-from pprint import pprint
-
 class StructuredLLM:
 
     def __init__(
@@ -48,21 +46,24 @@ class StructuredLLM:
                 # Give the LLM both:
                 # 1. Its previous output
                 # 2. The validation error
-                retry_message = {
-                    "role": "user",
-                    "content": (
-                        "Your previous response was:\n\n"
-                        f"{raw_output}\n\n"
-                        "The response failed schema validation "
-                        "with the following error:\n\n"
-                        f"{error}\n\n"
-                        "Correct your previous response based on "
-                        "this error.\n"
-                        "Return ONLY valid JSON matching the "
-                        "required schema."
+                current_messages.append(
+                        {
+                            "role": "assistant",
+                            "content": raw_output
+                        }
                     )
-                }
 
-                current_messages.append(retry_message)
+                current_messages.append(
+                        {
+                            "role": "user",
+                            "content": (
+                                "Your previous response failed schema validation.\n\n"
+                                f"Validation error:\n{error}\n\n"
+                                "Correct the previous response based on this error.\n"
+                                "Return ONLY valid JSON matching the required schema."
+                            )
+                        }
+                    )
+
 
         pprint(f"Final messages for LLM: {current_messages}")

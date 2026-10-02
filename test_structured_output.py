@@ -2,8 +2,7 @@ import json
 
 from config import LLM_MODEL, HF_TOKEN
 from src.llm.client import LLMClient
-from src.llm.prompts import SYSTEM_PROMPT
-from src.llm.parser import StructuredOutputParser
+from src.llm.prompts import build_system_prompt
 from src.llm.structured import StructuredLLM
 from src.models.schemas import AssistantResponse
 
@@ -13,6 +12,8 @@ def main():
 
     llm = LLMClient(LLM_MODEL,hf_token=HF_TOKEN)
 
+    SYSTEM_PROMPT = build_system_prompt(AssistantResponse)
+    
     messages = [
         {
             "role": "system",
@@ -27,7 +28,7 @@ def main():
     structured_llm = StructuredLLM(
         llm=llm,
         schema=AssistantResponse,
-        max_retries=5
+        # max_retries=5
     )
 
     response = structured_llm.generate(messages)

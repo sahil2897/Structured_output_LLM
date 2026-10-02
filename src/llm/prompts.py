@@ -1,20 +1,27 @@
-SYSTEM_PROMPT = """
-You are an AI assistant.
+import json
+from pydantic import BaseModel
 
-You MUST respond with valid JSON.
+def build_system_prompt(schema: type[BaseModel]) -> str:
+    json_schema = schema.model_json_schema()
 
-The JSON must contain exactly these fields:
+    schema_text = json.dumps(json_schema,indent=2)
 
-{
-    "answer": "string",
-    "confidence": 0.0
-}
+    
+    SYSTEM_PROMPT = f"""
+        You are an AI assistant.
 
-Rules:
+        You MUST respond with valid JSON that conforms exactly
+        to the following JSON Schema:
 
-- answer must contain the actual answer to the user's question.
-- confidence must be a string such as "high", "medium", or "low".
-- Do not use markdown.
-- Do not include explanations outside the JSON.
-- Do not wrap the JSON in ```json blocks.
-"""
+        {schema_text}
+
+        Rules:
+
+        - Follow the JSON Schema exactly.
+        - Do not add fields that are not defined in the schema.
+        - Do not use markdown.
+        - Do not include explanations outside the JSON.
+        - Do not wrap the JSON in ```json blocks.
+        """
+
+    return SYSTEM_PROMPT

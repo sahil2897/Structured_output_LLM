@@ -1,0 +1,46 @@
+
+    week3_ai_research_assistant/
+│
+├── app.py
+├── config.py
+├── requirements.txt
+├── .env
+├── .gitignore
+├── README.md
+│
+├── src/
+│   ├── __init__.py
+│   │
+│   ├── models/
+│   │   ├── __init__.py
+│   │   └── schemas.py
+│   │
+│   ├── llm/
+│   │   ├── __init__.py
+│   │   ├── client.py
+│   │   └── prompts.py
+│   │
+│   ├── tools/
+│   │   ├── __init__.py
+│   │   ├── calculator.py
+│   │   ├── search.py
+│   │   ├── exchange_rate.py
+│   │   └── registry.py
+│   │
+│   ├── agent/
+│   │   ├── __init__.py
+│   │   └── loop.py
+│   │
+│   ├── api/
+│   │   ├── __init__.py
+│   │   └── routes.py
+│   │
+│   └── utils/
+│       ├── __init__.py
+│       ├── retry.py
+│       └── logging.py
+│
+└── tests/
+    ├── test_schemas.py
+    ├── test_tools.py
+    └── test_agent.py

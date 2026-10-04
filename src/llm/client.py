@@ -11,9 +11,10 @@ class LLMClient:
             token=hf_token
         )
 
-    def generate(self, messages, max_new_tokens=400):
+    def generate(self, messages, tools=None, max_new_tokens=400):
         inputs = self.tokenizer.apply_chat_template(
             messages,
+            tools=tools,
             add_generation_prompt=True,
             tokenize=True,
             return_dict=True,

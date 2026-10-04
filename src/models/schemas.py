@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-
+from typing import Any
 
 class ChatRequest(BaseModel):
     message: str = Field(
@@ -20,4 +20,26 @@ class AssistantResponse(BaseModel):
         description="Confidence score between 0 and 1"
     )
 
+
+class ToolCall(BaseModel):
+    name: str = Field(
+        ...,
+        description="Name of the tool to execute"
+    )
+
+    arguments: dict[str, Any] = Field(
+        ...,
+        description="Arguments to pass to the tool"
+    )
+
+
+class CalculatorInput(BaseModel):
+    expression: str = Field(
+        ...,
+        min_length=1,
+        description=(
+            "Mathematical expression to evaluate, "
+            "for example '3847 * 927'"
+        )
+    )
 

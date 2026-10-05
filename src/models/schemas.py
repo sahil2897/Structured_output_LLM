@@ -43,3 +43,23 @@ class CalculatorInput(BaseModel):
         )
     )
 
+
+class CurrentDateTimeInput(BaseModel):
+    pass
+
+
+class ExchangeRateInput(BaseModel):
+    from_currency: str = Field(
+        ...,
+        min_length=3,
+        max_length=3,
+        description="Three-letter source currency code, for example USD"
+    )
+
+    to_currency: str = Field(
+        ...,
+        min_length=3,
+        max_length=3,
+        description="Three-letter target currency code, for example INR"
+    )
+

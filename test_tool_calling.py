@@ -4,8 +4,6 @@ from src.llm.client import LLMClient
 from src.tools.registry import TOOLS
 from src.llm.tool_parser import parse_tool_call
 
-from src.models.schemas import CalculatorInput
-from src.tools.calculator import calculator
 
 from src.tools.executor import execute_tool
 
@@ -21,7 +19,7 @@ def main():
         {
             "role": "user",
             "content": (
-                "I love the book 1984 and I read it 2 times, can you tell me who wrote it?"
+                "what is the conversion from american dollar to indian rupee"
             )
         }
     ]
@@ -67,7 +65,7 @@ def main():
 
     final_response = llm.generate(
             messages,
-            tools=[CALCULATOR_TOOL]
+            tools=TOOLS
         )
 
     print("\nFINAL RESPONSE:")

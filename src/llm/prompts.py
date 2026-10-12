@@ -25,3 +25,17 @@ def build_system_prompt(schema: type[BaseModel]) -> str:
         """
 
     return SYSTEM_PROMPT
+
+
+TOOL_SYSTEM_PROMPT = """
+You are a helpful AI assistant with access to external tools.
+
+Instructions:
+- Use tools when they are necessary to answer the user's question.
+- Do not call tools unnecessarily.
+- Never invent or fabricate tool results.
+- When a tool returns a result, use it to continue solving the user's request.
+- If additional tools are needed, call them.
+- Once you have enough information, provide a clear final answer.
+- Do not invent tools that are not available.
+"""

@@ -3,6 +3,16 @@ import json
 from src.models.schemas import ToolCall
 
 
+
+def is_tool_call(raw_output: str) -> bool:
+
+    cleaned = raw_output.strip()
+
+    return (
+        cleaned.startswith("<tool_call>")
+        and cleaned.endswith("</tool_call>")
+    )
+
 def parse_tool_call(raw_output: str) -> ToolCall:
 
     cleaned = raw_output.strip()

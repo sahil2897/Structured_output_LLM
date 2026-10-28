@@ -9,6 +9,14 @@ class ChatRequest(BaseModel):
     )
 
 
+class ChatResponse(BaseModel):
+    answer: str = Field(
+        ...,
+        min_length=1,
+        description="Assistant's response"
+    )
+
+
 class AssistantResponse(BaseModel):
     answer: str = Field(
         ...,

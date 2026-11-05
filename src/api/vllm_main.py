@@ -2,9 +2,12 @@ import asyncio
 import random
 import time
 import uuid
+import os
 
 import httpx
 import structlog
+
+from dotenv import load_dotenv
 
 from contextlib import asynccontextmanager
 
@@ -25,15 +28,19 @@ from src.api.logging_config import setup_logging
 # Configuration
 # ============================================================
 
-MODEL_NAME = "Qwen/Qwen3-1.7B"
 
-VLLM_BASE_URL = "http://127.0.0.1:8001/v1"
+load_dotenv()
+
+MODEL_NAME = os.environ["LLM_MODEL"]
+VLLM_BASE_URL = os.environ["LLM_BASE_URL"]
+LLM_API_KEY = os.getenv("LLM_API_KEY", "not-needed")
 
 MAX_ATTEMPTS = 3
 BASE_DELAY = 1.0
 MAX_DELAY = 10.0
 
 RETRYABLE_STATUS_CODES = {429, 500, 502, 503, 504}
+
 
 
 # ============================================================
@@ -56,7 +63,7 @@ async def lifespan(app: FastAPI):
 
     app.state.llm_client = AsyncOpenAI(
         base_url=VLLM_BASE_URL,
-        api_key="not-needed",
+        api_key=LLM_API_KEY,
         timeout=httpx.Timeout(
             20.0,
             connect=3.0

@@ -23,6 +23,9 @@ from openai import (
 from src.models.schemas import ChatRequest, ChatResponse
 from src.api.logging_config import setup_logging
 
+import asyncio
+from fastapi.responses import StreamingResponse
+
 
 # ============================================================
 # Configuration
@@ -293,5 +296,70 @@ async def chat(request: ChatRequest, http_request: Request):
 
 
 
+async def stream_llm(stream):
+    try:
+        async for chunk in stream:
+            if not chunk.choices:
+                continue
 
-        
+            content = chunk.choices[0].delta.content
+
+            if content:
+                yield content
+
+    except asyncio.CancelledError:
+        logger.info("stream_cancelled")
+        raise
+
+    except Exception:
+        logger.exception("stream_interrupted")
+        yield "\n[Stream interrupted. Please retry.]\n"
+
+    finally:
+        await stream.close()
+
+
+@app.post("/chat/stream")
+async def chat_stream(
+    request: ChatRequest,
+    http_request: Request
+):
+    client = http_request.app.state.llm_client
+
+    messages = [
+        {"role": "user", "content": request.message}
+    ]
+
+    try:
+        # Establish upstream stream before sending HTTP headers
+        stream = await client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=messages,
+            max_tokens=500,
+            stream=True
+        )
+
+    except APITimeoutError as e:
+        raise HTTPException(
+            status_code=504,
+            detail="Inference server timed out"
+        ) from e
+
+    except APIConnectionError as e:
+        raise HTTPException(
+            status_code=503,
+            detail="Inference server unavailable"
+        ) from e
+
+    except APIStatusError as e:
+        raise HTTPException(
+            status_code=502,
+            detail="Inference server returned an error"
+        ) from e
+
+    return StreamingResponse(
+        stream_llm(stream),
+        media_type="text/plain"
+    )
+
+
